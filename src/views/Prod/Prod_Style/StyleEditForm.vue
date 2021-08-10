@@ -1,5 +1,5 @@
 ﻿<template>
-  <a-modal :title="title" width="1000px" :visible="visible" :confirmLoading="loading" :maskClosable="false" okText="保存" @ok="handleSubmit" @cancel="()=>{this.visible=false}" centered>
+  <a-modal :title="title" width="1000px" :visible="visible" :confirmLoading="loading" :maskClosable="false" okText="保存" @ok="handleSubmit" @cancel="hide" centered>
     <!-- <a-spin :spinning="loading"> -->
     <div class="list" ref="listView">
       <a-row>
@@ -57,6 +57,14 @@ export default {
       this.entity = {}
 
     },
+    hide() {
+      this.visible = false;
+      setTimeout(() => {
+        this.$refs.baseInfo.init();
+      }, 100);
+
+
+    },
     custormAnchor(anchorName) {
       // 找到锚点
       let anchorElement = document.getElementById(anchorName);
@@ -82,8 +90,9 @@ export default {
       })
     },
     async handleSubmit() {
-      if (await this.$refs.baseInfo.save()) this.visible = false
+      if (await this.$refs.baseInfo.save()) this.hide()
       this.$emit("change")
+
     }
   }
 }

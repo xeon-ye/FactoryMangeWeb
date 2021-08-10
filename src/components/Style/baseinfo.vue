@@ -3,9 +3,11 @@
     <a-row type="flex">
       <a-col class="mr5">
         <a-card hoverable style="height: 360px">
-          <img slot="cover" alt="example" class="img1" src="../../assets/nopic.jpg" />
+          <img slot="cover" alt="example"  v-if="entity.PicUrl" class="img1" :src="'http://localhost:5000'+entity.PicUrl" />
+          <img slot="cover" alt="example" v-else class="img1" src="../../assets/nopic.jpg" />
+
           <template slot="actions" class="ant-card-actions">
-            <ImgCutter  :sizeChange="false" :boxWidth="1000" :boxHeight="600" :cutWidth="450" :cutHeight="600" @cutDown="upLoadStylePic" fileType="jpeg">
+            <ImgCutter :sizeChange="false" :boxWidth="1000" :boxHeight="600" :cutWidth="450" :cutHeight="600" @cutDown="upLoadStylePic" fileType="jpeg">
               <a-button type="link" :disabled="!entity.StyleId" slot="open">
                 <a-icon type="edit" /> 上传款式图
               </a-button>
@@ -34,7 +36,7 @@
                 <td>款号</td>
                 <td class="tdWidth">
                   <ValidationProvider name="款号" rules="required" v-slot="{ errors }">
-                    <a-input  v-bind:class="{ editcolor: isedit&&!errors[0], errorcolor:isedit&&errors[0]}" :readOnly="!isedit" v-model="entity.StyleNo" autocomplete="off">
+                    <a-input v-bind:class="{ editcolor: isedit&&!errors[0], errorcolor:isedit&&errors[0]}" :readOnly="!isedit" v-model="entity.StyleNo" autocomplete="off">
                       <a-tooltip v-show="isedit&&errors[0]" slot="suffix" :title="errors[0]">
                         <a-icon type="info-circle" style="color: red" />
                       </a-tooltip>
@@ -142,9 +144,19 @@ export default {
     }
   },
   methods: {
-    upLoadStylePic(picobj){
+    async upLoadStylePic(picobj) {
       //上传图片
-      console.log(picobj)
+      var data = new FormData();
+      data.append('file', picobj.file)
+      data.append('id', this.entity.Id)
+      console.log(data)
+      let result = await this.$http.post("/Base_Manage/Upload/UploadStylePic", data)
+      this.entity.PicUrl=result.url
+      console.log(result)
+    },
+    init(){
+      this.entity={}
+      this.isedit=false
     },
     clientChange(v) {
       this.entity.ClientName = v.Name

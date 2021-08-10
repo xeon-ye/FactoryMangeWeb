@@ -15,11 +15,8 @@
                 <a-select-option key="StyleId">款式ID</a-select-option>
                 <a-select-option key="StyleNo">款号</a-select-option>
                 <a-select-option key="ClientStyleNo">客户款号</a-select-option>
-                <a-select-option key="ClientId">客户ID</a-select-option>
-                <a-select-option key="ClientName">客户名</a-select-option>
-                <a-select-option key="Gauge">针型</a-select-option>
-                <a-select-option key="SeachStr">搜索字符串</a-select-option>
-                <a-select-option key="PicUrl">PicUrl</a-select-option>
+                <a-select-option key="ClientName">客户</a-select-option>
+                <!-- <a-select-option key="SeachStr">模糊查找</a-select-option>s -->
               </a-select>
             </a-form-item>
           </a-col>
@@ -45,7 +42,14 @@
           <a @click="handleDelete([record.Id])">删除</a>
         </template>
       </span>
-       <a slot="bb" slot-scope="text,record" @click="handleEdit(record.Id)">{{record.StyleId}}</a>
+
+      <div slot="pic" slot-scope="text,record">
+        <a href="#">
+          <img slot=" cover" alt="example" v-if="record.PicUrl" class="img2" :src="'http://localhost:5000'+record.PicUrl" @click="handleEdit(record.Id)" />
+          <img slot="cover" alt="example" v-else class="img2" @click="handleEdit(record.Id)" src="../../../assets/nopic.jpg" />
+        </a>
+
+      </div>
     </a-table>
 
     <edit-form ref="editForm" :parentObj="this" @change="getDataList"></edit-form>
@@ -54,16 +58,19 @@
 
 <script>
 import EditForm from './StyleEditForm'
-
+// import nopic from '../../../assets/'
+const nopic = "../../../assets/nopic.jpg";
 const columns = [
-  { title: '款式ID', dataIndex: 'StyleId', width: '10%', scopedSlots: { customRender: 'bb' },},
+  { title: '款式图', dataIndex: 'PicUrl', width: '60px', scopedSlots: { customRender: 'pic' }, },
+
+  { title: '款式ID', dataIndex: 'StyleId', width: '10%' },
   { title: '款号', dataIndex: 'StyleNo', width: '10%' },
-  { title: '客户款号', dataIndex: 'ClientStyleNo', width: '10%' },
-  { title: '季节', dataIndex: 'Season', width: '10%' },
-  { title: '客户名', dataIndex: 'ClientName', width: '10%' },
-  { title: '克重(g)', dataIndex: 'Weight', width: '10%' },
-  { title: '针型', dataIndex: 'Gauge', width: '10%' },
+  { title: '客户', dataIndex: 'ClientName', width: '10%' },
   { title: '品牌', dataIndex: 'Brand', width: '10%' },
+  { title: '克重(g)', dataIndex: 'Weight', width: '6%' },
+  { title: '录入日期', dataIndex: 'CreateTime', width: '10%' },
+
+  // { title: '针型', dataIndex: 'Gauge', width: '10%' },
   { title: '操作', dataIndex: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
@@ -116,6 +123,8 @@ export default {
           const pagination = { ...this.pagination }
           pagination.total = resJson.Total
           this.pagination = pagination
+          console.log(this.data)
+        
         })
     },
     onSelectChange(selectedRowKeys) {
@@ -154,3 +163,10 @@ export default {
   }
 }
 </script>
+<style scoped>
+.img2 {
+  width: 60px;
+  height: 80px;
+  object-fit: cover;
+}
+</style>
