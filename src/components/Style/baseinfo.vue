@@ -3,11 +3,11 @@
     <a-row type="flex">
       <a-col class="mr5">
         <a-card hoverable style="height: 360px">
-          <img slot="cover" alt="example"  v-if="entity.PicUrl" class="img1" :src="'http://localhost:5000'+entity.PicUrl" />
+          <img slot="cover" alt="example" v-if="entity.PicUrl" class="img1" :src="'http://localhost:5000'+entity.PicUrl" />
           <img slot="cover" alt="example" v-else class="img1" src="../../assets/nopic.jpg" />
 
           <template slot="actions" class="ant-card-actions">
-            <ImgCutter :sizeChange="false" :boxWidth="1000" :boxHeight="600" :cutWidth="450" :cutHeight="600" @cutDown="upLoadStylePic" fileType="jpeg">
+            <ImgCutter :sizeChange="false" :boxWidth="1000" :boxHeight="600" :cutWidth="450" :cutHeight="600" @cutDown="doConfirm" fileType="jpeg">
               <a-button type="link" :disabled="!entity.StyleId" slot="open">
                 <a-icon type="edit" /> 上传款式图
               </a-button>
@@ -144,19 +144,36 @@ export default {
     }
   },
   methods: {
+
+    doConfirm(picobj) {
+      let t = this;
+      if (this.entity.PicUrl) {
+        this.$confirm({
+          title: '是否复盖',
+          content: '该款式已经上传了图片，该操作将导致原上传的文件被复盖，并不可恢复。是否继续?',
+          onOk() {
+            t.upLoadStylePic(picobj)
+          },
+          onCancel() { },
+        });
+      } else t.upLoadStylePic(picobj)
+
+    },
+
     async upLoadStylePic(picobj) {
+
       //上传图片
       var data = new FormData();
       data.append('file', picobj.file)
       data.append('id', this.entity.Id)
       console.log(data)
       let result = await this.$http.post("/Base_Manage/Upload/UploadStylePic", data)
-      this.entity.PicUrl=result.url
+      this.entity.PicUrl = result.url
       console.log(result)
     },
-    init(){
-      this.entity={}
-      this.isedit=false
+    init() {
+      this.entity = {}
+      this.isedit = false
     },
     clientChange(v) {
       this.entity.ClientName = v.Name
@@ -184,7 +201,7 @@ export default {
           this.isedit = false;
           this.$message.success('操作成功');
           this.entity = re.Data;
-          console.log('save obj', re)
+          // console.log('save obj', re)
           return true
         } else {
           this.$message.warning('输入错误，请重新检查提交');
@@ -202,6 +219,8 @@ export default {
   width: 225px;
   height: 300px;
   object-fit: cover;
+ 
+
 }
 
 table {

@@ -1,26 +1,26 @@
 ﻿<template>
   <a-modal :title="title" width="1000px" :visible="visible" :confirmLoading="loading" :maskClosable="false" okText="保存" @ok="handleSubmit" @cancel="hide" centered>
-    <!-- <a-spin :spinning="loading"> -->
-    <div class="list" ref="listView">
-      <a-row>
-        <a-col :span="20">
-          <a-row>
-            <baseinfo ref="baseInfo" id="baseinfo" class="tm"></baseinfo>
-          </a-row>
+    <a-spin :spinning="loading">
+      <div class="list" ref="listView">
+        <a-row>
+          <a-col :span="20">
+            <a-row>
+              <baseinfo ref="baseInfo" id="baseinfo" class="tm"></baseinfo>
+            </a-row>
 
-        </a-col>
-        <a-col offset="10px" :span="2">
-          <a-anchor :getContainer="()=>this.$refs.listView">
-            <a-anchor-link href="#baseinfo" title="基本信息" />
-            <a-anchor-link href="#cf" title="原料成份" />
-            <a-anchor-link href="#proofData" title="打样资料" />
-            <a-anchor-link href="#proofRecord" title="打样记录" />
-            <a-anchor-link href="#prodRecord" title="大货记录" />
-          </a-anchor>
-        </a-col>
-      </a-row>
-    </div>
-    <!-- </a-spin> -->
+          </a-col>
+          <a-col offset="10px" :span="2">
+            <a-anchor :getContainer="()=>this.$refs.listView">
+              <a-anchor-link href="#baseinfo" title="基本信息" />
+              <a-anchor-link href="#cf" title="原料成份" />
+              <a-anchor-link href="#proofData" title="打样资料" />
+              <a-anchor-link href="#proofRecord" title="打样记录" />
+              <a-anchor-link href="#prodRecord" title="大货记录" />
+            </a-anchor>
+          </a-col>
+        </a-row>
+      </div>
+    </a-spin>
   </a-modal>
 </template>
 <style scoped>
@@ -85,8 +85,9 @@ export default {
       this.$nextTick(async () => {
         this.loading = true
         await this.$refs.baseInfo.loadStyle(id)
-        this.loading = false
+        
         this.title = "款式信息"
+        this.loading = false
       })
     },
     async handleSubmit() {

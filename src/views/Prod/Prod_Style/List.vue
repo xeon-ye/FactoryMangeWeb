@@ -48,8 +48,8 @@
           <img slot=" cover" alt="example" v-if="record.PicUrl" class="img2" :src="'http://localhost:5000'+record.PicUrl" @click="handleEdit(record.Id)" />
           <img slot="cover" alt="example" v-else class="img2" @click="handleEdit(record.Id)" src="../../../assets/nopic.jpg" />
         </a>
-
       </div>
+      <span slot="time" slot-scope="text, record">{{moment(record.CreateTime).format('L')}}</span>
     </a-table>
 
     <edit-form ref="editForm" :parentObj="this" @change="getDataList"></edit-form>
@@ -58,19 +58,28 @@
 
 <script>
 import EditForm from './StyleEditForm'
-// import nopic from '../../../assets/'
-const nopic = "../../../assets/nopic.jpg";
+import moment from 'moment'
+
 const columns = [
   { title: '款式图', dataIndex: 'PicUrl', width: '60px', scopedSlots: { customRender: 'pic' }, },
 
-  { title: '款式ID', dataIndex: 'StyleId', width: '10%' },
+  {
+    title: '款式ID', dataIndex: 'StyleId', width: '10%', sorter: true,
+    sortDirections: ['descend', 'ascend']
+  },
   { title: '款号', dataIndex: 'StyleNo', width: '10%' },
-  { title: '客户', dataIndex: 'ClientName', width: '10%' },
+  {
+    title: '客户', dataIndex: 'ClientName', width: '10%', sorter: true,
+    sortDirections: ['descend', 'ascend']
+  },
   { title: '品牌', dataIndex: 'Brand', width: '10%' },
-  { title: '克重(g)', dataIndex: 'Weight', width: '6%' },
-  { title: '录入日期', dataIndex: 'CreateTime', width: '10%' },
-
-  // { title: '针型', dataIndex: 'Gauge', width: '10%' },
+  { title: '克重(g)', dataIndex: 'Weight', width: '8%' },
+  {
+    title: '录入日期', dataIndex: 'CreateTime', width: '10%', sorter: true,
+    sortDirections: ['descend', 'ascend'],
+    scopedSlots: { customRender: 'time' },
+  },
+  { title: '针型', dataIndex: 'Gauge', width: '10%' },
   { title: '操作', dataIndex: 'action', scopedSlots: { customRender: 'action' } }
 ]
 
@@ -83,6 +92,7 @@ export default {
   },
   data() {
     return {
+      moment:moment,
       data: [],
       pagination: {
         current: 1,
@@ -90,7 +100,7 @@ export default {
         showTotal: (total, range) => `总数:${total} 当前:${range[0]}-${range[1]}`
       },
       filters: {},
-      sorter: { field: 'Id', order: 'asc' },
+      sorter: { field: 'StyleId', order: 'desc' },
       loading: false,
       columns,
       queryParam: {},
@@ -98,6 +108,7 @@ export default {
     }
   },
   methods: {
+ 
     handleTableChange(pagination, filters, sorter) {
       this.pagination = { ...pagination }
       this.filters = { ...filters }
@@ -123,8 +134,8 @@ export default {
           const pagination = { ...this.pagination }
           pagination.total = resJson.Total
           this.pagination = pagination
-          console.log(this.data)
-        
+          // console.log(this.data)
+
         })
     },
     onSelectChange(selectedRowKeys) {
@@ -168,5 +179,7 @@ export default {
   width: 60px;
   height: 80px;
   object-fit: cover;
+  border-radius: 3px;
+  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.5);
 }
 </style>
